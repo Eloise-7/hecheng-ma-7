@@ -92,7 +92,7 @@
     bestEl.textContent=best;
     function resize(){const rect=board.getBoundingClientRect();dpr=Math.min(window.devicePixelRatio||1,2);W=rect.width;H=rect.height;canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);aimX=W/2;draw()}
     new ResizeObserver(resize).observe(board);
-    function randomLevel(){return Math.floor(Math.random()*4)}
+    function randomLevel(){const r=Math.random();return r<.3?0:r<.6?1:r<.8?2:3}
     function drawToken(g,x,y,r,lvl,alpha=1){const p=levels[Math.min(lvl,levels.length-1)];const img=iconImages[Math.min(lvl,iconImages.length-1)],shape=shapeFor(lvl),drawR=renderRadius(r,lvl);g.save();g.globalAlpha=alpha;
       if(img&&img.complete&&img.naturalWidth&&shape.canvas){g.drawImage(shape.canvas,x-drawR,y-drawR,drawR*2,drawR*2);g.restore();return}
       const grad=g.createLinearGradient(x-drawR,y-drawR,x+drawR,y+drawR);grad.addColorStop(0,p.light);grad.addColorStop(1,p.color);g.beginPath();g.moveTo(x-drawR*.72,y-drawR*.18);g.lineTo(x-drawR*.42,y-drawR*.72);g.lineTo(x+drawR*.08,y-drawR*.9);g.lineTo(x+drawR*.72,y-drawR*.58);g.lineTo(x+drawR*.9,y-drawR*.05);g.lineTo(x+drawR*.55,y+drawR*.58);g.lineTo(x+drawR*.08,y+drawR*.9);g.lineTo(x-drawR*.54,y+drawR*.62);g.closePath();g.fillStyle=grad;g.shadowColor=p.color+'44';g.shadowBlur=drawR*.2;g.fill();g.shadowBlur=0;g.strokeStyle='#ffffffaa';g.lineWidth=Math.max(1.5,drawR*.07);g.stroke();
