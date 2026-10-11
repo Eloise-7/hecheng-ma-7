@@ -6,6 +6,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
+  <link rel="preload" href="icon-atlas-v1.webp" as="image" type="image/webp" fetchpriority="high">
   <meta name="theme-color" content="#fffaf0">
   <meta name="description" content="轻轻投下图标，让相同的图标相撞合成，看看你能走多远。">
   <title>合成🐎＋7</title>
@@ -157,6 +158,6 @@
     iconImages.forEach((img,i)=>{if(!img)return;img.addEventListener('load',()=>refreshImage(img,i));img.addEventListener('error',()=>{if(img._retry<2){img._retry++;setTimeout(()=>{img.src=iconUrl(img._src,img._retry)},500*img._retry)}else{redrawGallery();drawNext();draw()}});setTimeout(()=>refreshImage(img,i),120)});setTimeout(()=>iconImages.forEach((img,i)=>refreshImage(img,i)),1500);nextLevel=randomLevel();drawNext();resize();requestAnimationFrame(frame);
   })();
   </script>
-  <script src="game-13-v3.js"></script>
+  <script src="game-atlas-v1.js"></script>
 </body>
 </html>
