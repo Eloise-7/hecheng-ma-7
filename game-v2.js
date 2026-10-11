@@ -6,8 +6,8 @@
   const GRAVITY=2600,SUBSTEPS=3,ITERATIONS=6,DROP_DELAY=.36;
   const RESTITUTION=.38,WALL_RESTITUTION=.45,REST_THRESHOLD=55,FRICTION=.955;
   const OVER_LIMIT=.6,OVER_REST_SPEED=220,OVER_REST_SPEED2=OVER_REST_SPEED**2;
-  const MAX_TIER=9,MAX_BONUS=500,REVIVE_STEP=2000,MERGE_PAD=.8,SPRITE_FILL=.92;
-  const ASSET_VERSION='20261011-pbd3';
+  const MAX_TIER=12,MAX_BONUS=500,REVIVE_STEP=2000,MERGE_PAD=.8,SPRITE_FILL=.92;
+  const ASSET_VERSION='20261011-pbd4';
   const LEVELS=[
     {name:'图标 1',base:18,scale:1,file:'mobile-icon-01.png',color:'#d3a759'},
     {name:'图标 2',base:24,scale:1,file:'mobile-icon-02.png',color:'#bd8a61'},
@@ -18,9 +18,12 @@
     {name:'图标 7',base:80,scale:.8,file:'mobile-icon-07.png',color:'#e8b645'},
     {name:'图标 8',base:82,scale:1,file:'mobile-icon-08.png',color:'#e2a84e'},
     {name:'图标 9',base:96,scale:1,file:'mobile-icon-09.png',color:'#7295c9'},
-    {name:'图标 10',base:110,scale:1,file:'mobile-icon-10.png',color:'#8798cc'}
+    {name:'图标 10',base:110,scale:1,file:'mobile-icon-10.png',color:'#8798cc'},
+    {name:'图标 11',base:125,scale:1,file:'mobile-icon-11.png',color:'#bca388'},
+    {name:'图标 12',base:140,scale:1,file:'mobile-icon-12.png',color:'#3156b8'},
+    {name:'图标 13',base:155,scale:1,file:'mobile-icon-13.png',color:'#b8876c'}
   ];
-  const MERGE_SCORE=[0,1,3,6,10,15,21,28,36,45];
+  const MERGE_SCORE=[0,1,3,6,10,15,21,28,36,45,55,66,78];
 
   const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
   const board=document.getElementById('board'),nextCanvas=document.getElementById('nextIcon'),nextCtx=nextCanvas.getContext('2d');
@@ -103,7 +106,7 @@
   }
 
   async function loadAssets(){
-    state.loaded=false;state.ready=false;loadMask.hidden=false;loadRetry.hidden=true;loadText.textContent='正在加载全部 10 张图标…';
+    state.loaded=false;state.ready=false;loadMask.hidden=false;loadRetry.hidden=true;loadText.textContent=`正在加载全部 ${LEVELS.length} 张图标…`;
     try{
       await Promise.all(LEVELS.map((_,i)=>loadOne(i)));
       state.loaded=true;loadMask.hidden=true;buildGallery();reset();

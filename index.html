@@ -151,6 +151,6 @@
     iconImages.forEach((img,i)=>{if(!img)return;img.addEventListener('load',()=>refreshImage(img,i));img.addEventListener('error',()=>{if(img._retry<2){img._retry++;setTimeout(()=>{img.src=iconUrl(img._src,img._retry)},500*img._retry)}else{redrawGallery();drawNext();draw()}});setTimeout(()=>refreshImage(img,i),120)});setTimeout(()=>iconImages.forEach((img,i)=>refreshImage(img,i)),1500);nextLevel=randomLevel();drawNext();resize();requestAnimationFrame(frame);
   })();
   </script>
-  <script src="game-v2.js?v=20261011-pbd3"></script>
+  <script src="game-v2.js?v=20261011-pbd4"></script>
 </body>
 </html>
