@@ -33,6 +33,9 @@
     .underbar{width:min(100%,420px);display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}.underbar .pill{padding:9px 13px;border-radius:13px;background:#fffdf8;box-shadow:0 3px 12px #806b4915;font-size:12px}.rule-note{width:min(100%,420px);text-align:center;color:#877967;font-size:12px;line-height:1.8;padding:3px 7px 0}.rule-note strong{color:#705a46}.merge-card{width:min(100%,420px);padding:13px 14px;border-radius:20px;background:#ffffffa8;border:1px solid #fff;box-shadow:0 7px 22px #806b4910}.merge-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:13px;font-weight:800}.merge-head small{font-weight:500;color:#a19483}.merge-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}.merge-item{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;padding:7px 3px;border-radius:14px;background:#fffdf8}.merge-item canvas{width:36px;height:36px}.merge-item span{font-size:9px;color:#8c7e6c;white-space:nowrap}.footer{font-size:10px;color:#afa18e;text-align:center;padding-top:3px}
     @media(max-width:400px){.app{padding:9px 9px 23px;gap:9px}.topbar{grid-template-columns:1fr 1fr 42px 42px 72px;gap:5px;padding:6px}.scorebox{padding:6px 9px}.scorebox strong{font-size:18px}.iconbtn,.restart{height:41px;border-radius:15px}.board-shell{padding:8px;border-radius:27px}.board{border-radius:19px;min-height:0;max-height:74vh}.merge-grid{grid-template-columns:repeat(5,1fr)}}
     @media(max-height:740px){.board{max-height:67vh;min-height:380px}}
+    html,body{height:100%;overscroll-behavior:none}
+    .load-mask{position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;background:#fff9ebf2;color:#725f4c}.load-mask[hidden]{display:none}.load-mask strong{font-size:16px}.load-mask button{padding:10px 16px;border-radius:14px;background:#f17d60;color:#fff;font-weight:800}.revive-chip{position:absolute;z-index:3;left:12px;top:12px;padding:4px 9px;border-radius:999px;background:linear-gradient(135deg,#ffe49a,#ffc24a);color:#684500;font-size:12px;font-weight:800;box-shadow:0 4px 12px #a86a1638;pointer-events:none}.revive-chip[hidden]{display:none}
+    @media(max-width:680px){body{height:100dvh;min-height:0;overflow:hidden;padding:calc(8px + env(safe-area-inset-top)) calc(8px + env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) calc(8px + env(safe-area-inset-left))}.app{height:100%;min-height:0;padding:0;gap:8px;justify-content:flex-start}.topbar{flex:0 0 auto;border-radius:18px}.board-shell{flex:0 1 auto;height:min(calc(100dvh - 92px - env(safe-area-inset-top) - env(safe-area-inset-bottom)),calc(96vw * 700 / 420));width:auto;max-width:96vw;aspect-ratio:420/700;padding:8px;border-radius:24px}.board{width:100%;height:100%;min-height:0;max-height:none;aspect-ratio:auto;border-radius:18px}.underbar,.merge-card,.rule-note,.footer{display:none!important}.next-card{right:10px;top:9px}.hintline{top:20.2857%}}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
   </style>
 </head>
@@ -50,6 +53,8 @@
         <canvas id="game" aria-label="游戏画面，移动瞄准并点击投放"></canvas>
         <div class="hintline"></div>
         <div class="next-card"><span>下一个</span><canvas id="nextIcon" width="64" height="64"></canvas></div>
+        <div class="revive-chip" id="reviveBadge" hidden>🪙 ×<span id="reviveCount">0</span></div>
+        <div class="load-mask" id="loadMask"><strong id="loadText">正在加载全部图标…</strong><button id="loadRetry" hidden>重新加载</button></div>
         <div class="modal" id="reviveModal" role="dialog" aria-modal="true" aria-labelledby="reviveTitle">
           <div class="dialog"><div class="modal-icon">😵</div><h2 id="reviveTitle">还能再救一下</h2><p class="modal-score">本局得分 <b id="reviveScore">0</b></p><p>清掉警戒线以上的图标，接着玩</p><div class="actions"><button class="pill" id="declineRevive">结束本局</button><button class="pill gold" id="useRevive">🪙 用一枚复活币</button></div><p id="coinCount" style="margin-top:10px">还剩 0 枚</p></div>
         </div>
@@ -66,7 +71,7 @@
     <p class="rule-note"><strong>鼠标</strong>：移动瞄准、点击投放；<strong>触屏</strong>：拖动瞄准、松手投放。<br>← → 微调位置，空格投放，R 重开。每 2000 分获得一枚本局复活币。</p>
     <p class="footer">图标可以替换成你喜欢的样子</p>
   </main>
-  <script>
+  <script type="text/plain" id="legacy-game">
   (()=>{
     const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),board=document.getElementById('board'),nextCanvas=document.getElementById('nextIcon'),nextCtx=nextCanvas.getContext('2d');
     const scoreEl=document.getElementById('score'),bestEl=document.getElementById('best'),levels=[
@@ -146,5 +151,6 @@
     iconImages.forEach((img,i)=>{if(!img)return;img.addEventListener('load',()=>refreshImage(img,i));img.addEventListener('error',()=>{if(img._retry<2){img._retry++;setTimeout(()=>{img.src=iconUrl(img._src,img._retry)},500*img._retry)}else{redrawGallery();drawNext();draw()}});setTimeout(()=>refreshImage(img,i),120)});setTimeout(()=>iconImages.forEach((img,i)=>refreshImage(img,i)),1500);nextLevel=randomLevel();drawNext();resize();requestAnimationFrame(frame);
   })();
   </script>
+  <script src="game-v2.js?v=20261011-pbd3"></script>
 </body>
 </html>
