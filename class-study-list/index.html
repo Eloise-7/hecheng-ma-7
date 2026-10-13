@@ -536,7 +536,7 @@
                 typeSelect.innerHTML += `<option value="${type.id}">${type.name}</option>`;
             });
             filterSelect.value = currentFilter || '';
-            typeSelect.value = currentType || '';
+            typeSelect.value = currentType || taskTypes[0]?.id || '';
         }
 
         function autoGenerateSections() {
